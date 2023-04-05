@@ -4,27 +4,12 @@
 
 int MAX,MIN = 0;
 
-
-bool isNumber(char number[]) {
-    for (int i = 0; number[i] != 0; i++) {
-        if (!isdigit(number[i]))
-            return false;
-    }
-    return true;
-}
-
-void printPropperUse() {
-    perror("Invalid arguments!\nProper use:\n"
-           "./your_binary <min> <max> <-d>\n"
-           "Note use '-d' only for debug.");
-}
-
 bool validateAndSetMinMax(int min, int max){
     if(min>=max){
         return false;
     }
     MAX = max;
-    MIN = MIN;
+    MIN = min;
     return true;
 }
 
