@@ -3,15 +3,21 @@
 #include <errno.h>
 #include <math.h>
 #include <iostream>
+#include <omp.h>
 #include "tools.cpp"
 
+//Algorytm ten sekwencyjnie wyznacza liczby pierwsze.
+// Zrównoleglenie obliczeń polega na przydziale wątkom wcześniej wyliczonych liczb pierwszych do wykreślenia.
 
 ull MAX, MIN = 0;
 bool DEBUGMODE = false;
+#define threads 4
+
 
 int main(int argc, char *argv[]) {
     if (!validateProgramArguments(argc, argv, MIN, MAX, DEBUGMODE))
         return 0;
+
     ull count = 0;
     int lineBreak = 10;
 
@@ -26,7 +32,6 @@ int main(int argc, char *argv[]) {
     //główna petla sita
     for (int number = 2; number <= lastNumber; number++) {
 
-
         //sprawdzam czy nie była wczesniej wykreślona
         if (!IsPrimeTable[number - 2])
             continue;
@@ -34,6 +39,11 @@ int main(int argc, char *argv[]) {
         //nie była wczesniej wykreslona i jest pierwsza
         //wykreslam wszystkie wielokrotnosci z tableli
 
+        omp_set_num_threads(threads);
+
+#pragma omp parallel for
+        //ulepszony algorytm  poprzez ustawienie planisty na dynamic
+#pragma omp parallel for schedule(dynamic,1)
         for (ull multi = number * 2; multi <= MAX; multi += number) {
             IsPrimeTable[multi - 2] = false;
         }
@@ -52,9 +62,6 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-
-
-
     }
 
     for (int i = lastNumber; i <MAX ; ++i) {
